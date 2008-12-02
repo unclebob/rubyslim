@@ -1,0 +1,3 @@
+class SlimError < Exception
+
+end
