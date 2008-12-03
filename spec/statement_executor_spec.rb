@@ -20,12 +20,8 @@ describe StatementExecutor do
   end
 
   it "should require a class" do
-    begin
-      @executor.require_class("MyModule::MyClass")
-      fail("Should not get here");
-    rescue SlimError => e
-      e.to_s.should == "message:<<COULD_NOT_INVOKE_CONSTRUCTOR my_module/my_class>>"
-    end
+      proc = proc {@executor.require_class("MyModule::MyClass")}
+      proc.should raise_error(SlimError, "message:<<COULD_NOT_INVOKE_CONSTRUCTOR my_module/my_class>>")
   end
 
   it "should build a fully qualified class name" do

@@ -14,12 +14,8 @@ describe StatementExecutor do
   end
 
   it "can't call a method that doesn't exist" do
-    begin
-      @caller.call("test_slim", "no_such_method")
-      fail("Shouldn't get here");
-    rescue SlimError => e
-      e.to_s.should == "message:<<NO_METHOD_IN_CLASS no_such_method[0] TestModule::TestSlim.>>"
-    end
+      result = @caller.call("test_slim", "no_such_method")
+      result.should include(Statement::EXCEPTION_TAG + "message:<<NO_METHOD_IN_CLASS no_such_method[0] TestModule::TestSlim.>>")
   end
 
   it "can call a method that returns a value" do
@@ -33,6 +29,7 @@ describe StatementExecutor do
   end
 
   it "can't call a method on an instance that doesn't exist" do
-    proc {@caller.call("no_such_instance", "no_such_method")}.should raise_error(SlimError)
+    result = @caller.call("no_such_instance", "no_such_method")
+    result.should include(Statement::EXCEPTION_TAG + "message:<<NO_METHOD_IN_CLASS no_such_method[0] NilClass.>>")
   end
 end

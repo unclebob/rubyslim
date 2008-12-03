@@ -1,4 +1,5 @@
 require "slim_error"
+require "statement"
 
 class StatementExecutor
   def initialize
@@ -6,8 +7,12 @@ class StatementExecutor
   end
 
   def create(instance_name, class_name, constructor_arguments)
-    @instances[instance_name] = construct_instance(class_name, constructor_arguments);
-    "OK"
+    begin
+      @instances[instance_name] = construct_instance(class_name, constructor_arguments);
+      "OK"
+    rescue SlimError => e
+      Statement::EXCEPTION_TAG + e.to_s
+    end
   end
 
   def construct_instance(class_name, constructor_arguments)
@@ -21,7 +26,6 @@ class StatementExecutor
       require path
     rescue LoadError => e
       raise SlimError.new("message:<<COULD_NOT_INVOKE_CONSTRUCTOR #{path}>>")
-
     end
   end
 
@@ -60,11 +64,15 @@ class StatementExecutor
   end
 
   def call(instance_name, method_name, *args)
-    instance = @instances[instance_name]
-    method = method_name.to_sym
-    raise SlimError.new("message:<<NO_METHOD_IN_CLASS #{method}[#{args.length}] #{instance.class.name}.>>") if !instance.respond_to?(method)
-    instance.send(method, *args)
+    begin
+      instance = @instances[instance_name]
+      method = method_name.to_sym
+      raise SlimError.new("message:<<NO_METHOD_IN_CLASS #{method}[#{args.length}] #{instance.class.name}.>>") if !instance.respond_to?(method)
+      instance.send(method, *args)
+    rescue SlimError => e
+      Statement::EXCEPTION_TAG + e.to_s
+    end
   end
 
-  
+
 end

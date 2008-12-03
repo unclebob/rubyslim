@@ -21,21 +21,12 @@ describe StatementExecutor do
   end
 
   it "can't create an instance with the wrong number of arguments" do
-    begin
-    @caller.create("x", "TestModule.TestSlim", ["noSuchArgument"])
-      fail("Shouldn't get here");
-    rescue SlimError => e
-      e.to_s.should == "message:<<COULD_NOT_INVOKE_CONSTRUCTOR TestModule::TestSlim[1]>>"
-    end
+    result = @caller.create("x", "TestModule.TestSlim", ["noSuchArgument"])
+    result.should include(Statement::EXCEPTION_TAG + "message:<<COULD_NOT_INVOKE_CONSTRUCTOR TestModule::TestSlim[1]>>")
   end
 
-
   it "can't create an instance if there is no class" do
-    begin
-    @caller.create("x", "TestModule.NoSuchClass", [])
-      fail("Shouldn't get here");
-    rescue SlimError => e
-      e.to_s.should == "message:<<COULD_NOT_INVOKE_CONSTRUCTOR test_module/no_such_class>>"
-    end
+    result = @caller.create("x", "TestModule.NoSuchClass", [])
+    result.should include(Statement::EXCEPTION_TAG + "message:<<COULD_NOT_INVOKE_CONSTRUCTOR test_module/no_such_class>>")
   end
 end
