@@ -12,11 +12,15 @@ class Statement
 
   def exec(executor)
     @executor = executor
-    if operation == "make"
+
+    case(operation)
+    when "make"
       instance_name = get_word(2)
       class_name = slim_to_ruby_class(get_word(3))
       [id, @executor.create(instance_name, class_name, get_args(4))]
-    elsif operation == "call"
+    when "import"
+      @executor.add_module(get_word(2))
+    when  "call"
       call_method_at_index(2)
     else
       [id, EXCEPTION_TAG+"message:<<INVALID_STATEMENT: #{@statement.inspect}.>>"]

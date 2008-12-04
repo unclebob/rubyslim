@@ -4,6 +4,7 @@ require "statement"
 class StatementExecutor
   def initialize
     @instances = {}
+    @modules = []
   end
 
   def create(instance_name, class_name, constructor_arguments)
@@ -21,12 +22,16 @@ class StatementExecutor
   end
 
   def require_class(class_name)
-    path = make_path_to_class(class_name)
-    begin
-      require path
-    rescue LoadError => e
-      raise SlimError.new("message:<<COULD_NOT_INVOKE_CONSTRUCTOR #{path}>>")
-    end
+    (@modules.map{|module_name| module_name + "::" + class_name} << class_name).reverse.each {|fqn|
+        path = make_path_to_class(fqn)
+        puts "requiring #{path}"
+        begin
+          require path
+          return
+        rescue LoadError
+        end
+      }
+     raise SlimError.new("message:<<COULD_NOT_INVOKE_CONSTRUCTOR #{path}>>")
   end
 
   def make_path_to_class(class_name)
@@ -40,18 +45,35 @@ class StatementExecutor
   end
 
   def construct(class_name, constructor_arguments)
-    module_path  = make_module_path(class_name)
-    class_object = eval(module_path)
+    class_object = get_class(class_name)
     begin
       class_object.new(*constructor_arguments)
     rescue ArgumentError => e
-      raise SlimError.new("message:<<COULD_NOT_INVOKE_CONSTRUCTOR #{module_path}[#{constructor_arguments.length}]>>")
+      raise SlimError.new("message:<<COULD_NOT_INVOKE_CONSTRUCTOR #{fully_qualified_class_name}[#{constructor_arguments.length}]>>")
     end
   end
 
-  def make_module_path(class_name)
+  def get_class(class_name)
     module_names = split_class_name(class_name)
-    module_names.join("::");
+    first_pass_name = module_names.join("::")
+    begin
+      eval(first_pass_name)
+    rescue NameError
+      resolve_class_in_other_modules(class_name)
+     end
+  end
+
+  def resolve_class_in_other_modules(class_name)
+    @modules.reverse.each do |module_name|
+      fqn = "#{module_name}::#{class_name}"
+      puts "loading class: #{fqn}"
+      begin
+        return eval(fqn)
+      rescue NameError
+
+      end
+    end
+    raise SlimError.new("message:<<COULD_NOT_INVOKE_CONSTRUCTOR #{class_name} in any module #{@modules.inspect}>>")
   end
 
   def instance(instance_name)
@@ -72,6 +94,10 @@ class StatementExecutor
     rescue SlimError => e
       Statement::EXCEPTION_TAG + e.to_s
     end
+  end
+
+  def add_module(module_name)
+    @modules << module_name.gsub(/\./, '::')
   end
 
 
