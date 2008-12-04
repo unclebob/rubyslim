@@ -7,5 +7,9 @@ module TestModule
     def returnString  #Should not ever be called.
       "blah"
     end
+
+    def add(a,b)
+      a+b
+    end
   end 
 end

@@ -6,15 +6,15 @@ describe ListExecutor do
   before do
     @executor = ListExecutor.new
     @statements = []
-    @statements << ["i1", "import", "TestModule"]
-    @statements << ["m1", "make", "test_slim", "TestSlim"]
+    add_statement "i1", "import", "TestModule"
+    add_statement "m1", "make", "test_slim", "TestSlim"
     @expected_results = []
     @expected_results << ["i1", "OK"]
     @expected_results << ["m1", "OK"]
   end
 
   it "can't execute an invalid operation" do
-    @statements << ["inv1", "invalidOperation"]
+    add_statement "inv1", "invalidOperation"
     results = @executor.execute(@statements)
     get_result("inv1", results).should include(Statement::EXCEPTION_TAG+"message:<<INVALID_STATEMENT: [\"inv1\", \"invalidOperation\"].")
   end
@@ -30,13 +30,13 @@ describe ListExecutor do
   end
 
   it "can't execute a malformed instruction" do
-    @statements << ["id", "call", "notEnoughArguments"]
+    add_statement "id", "call", "notEnoughArguments"
     message = "message:<<MALFORMED_INSTRUCTION [\"id\", \"call\", \"notEnoughArguments\"].>>"
     proc {@executor.execute(@statements)}.should raise_error(SlimError, message)
   end
 
   it "can't call a method on an instance that doesn't exist" do
-    @statements << ["id", "call", "no_such_instance", "no_such_method"]
+    add_statement "id", "call", "no_such_instance", "no_such_method"
     results = @executor.execute(@statements)
     get_result("id", results).should include(Statement::EXCEPTION_TAG+"message:<<NO_METHOD_IN_CLASS no_such_method[0] NilClass.>>")
   end
@@ -50,14 +50,14 @@ describe ListExecutor do
   end
 
   it "can call a simple method in ruby form" do
-    @statements << ["id", "call", "test_slim", "return_string"]
+    add_statement "id", "call", "test_slim", "return_string"
     results = @executor.execute(@statements)
     get_result("m1", results).should == "OK"
     get_result("id", results).should == "string"
   end
 
   it "can call a simple method in FitNesse form" do
-    @statements << ["id", "call", "test_slim", "returnString"]
+    add_statement "id", "call", "test_slim", "returnString"
     results = @executor.execute(@statements)
     get_result("m1", results).should == "OK"
     get_result("id", results).should == "string"
@@ -65,9 +65,34 @@ describe ListExecutor do
 
   it "will allow later imports to take precendence over early imports" do
     @statements.insert(0, ["i2", "import", "TestModule.ShouldNotFindTestSlimInHere"])
-    @statements << ["id", "call", "test_slim", "return_string"]
+    add_statement "id", "call", "test_slim", "return_string"
     results = @executor.execute(@statements)
     get_result("m1", results).should == "OK"
     get_result("id", results).should == "string"
   end
+
+  it "can pass arguments to constructor" do
+    add_statement "m2", "make", "test_slim_2", "TestSlimWithArguments", "3"
+    add_statement "c1", "call", "test_slim_2", "arg"
+    results = @executor.execute(@statements)
+    get_result("m2", results).should == "OK"
+    get_result("c1", results).should == "3"
+  end
+
+  it "can call a function more than once" do
+    add_statement "c1", "call", "test_slim", "add", "x", "y"
+    add_statement "c2", "call", "test_slim", "add", "a", "b"
+    results = @executor.execute(@statements)
+    get_result("c1", results).should == "xy"
+    get_result("c2", results).should == "ab"
+  end
+
+  it "can assign the return value to a symbol" do
+    
+  end
+
+  def add_statement(*args)
+    @statements << args
+  end
+
 end
