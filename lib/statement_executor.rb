@@ -21,18 +21,6 @@ class StatementExecutor
     construct(class_name, constructor_arguments);
   end
 
-  def require_class(class_name)
-    (@modules.map{|module_name| module_name + "::" + class_name} << class_name).reverse.each {|fqn|
-        path = make_path_to_class(fqn)
-        puts "requiring #{path}"
-        begin
-          require path
-          return
-        rescue LoadError
-        end
-      }
-     raise SlimError.new("message:<<COULD_NOT_INVOKE_CONSTRUCTOR #{path}>>")
-  end
 
   def make_path_to_class(class_name)
     module_names = split_class_name(class_name)
@@ -53,26 +41,27 @@ class StatementExecutor
     end
   end
 
-  def get_class(class_name)
-    module_names = split_class_name(class_name)
-    first_pass_name = module_names.join("::")
-    begin
-      eval(first_pass_name)
-    rescue NameError
-      resolve_class_in_other_modules(class_name)
-     end
+  def require_class(class_name)
+    (@modules.map{|module_name| module_name + "::" + class_name} << class_name).reverse.each {|fqn|
+        path = make_path_to_class(fqn)
+        begin
+          require path
+          return
+        rescue LoadError
+        end
+      }
+     raise SlimError.new("message:<<COULD_NOT_INVOKE_CONSTRUCTOR #{path}>>")
   end
 
-  def resolve_class_in_other_modules(class_name)
-    @modules.reverse.each do |module_name|
-      fqn = "#{module_name}::#{class_name}"
-      puts "loading class: #{fqn}"
+  def get_class(class_name)
+    (@modules.map{|module_name| module_name + "::" + class_name} << class_name).reverse.each {|class_name|
+      module_names = split_class_name(class_name)
+      first_pass_name = module_names.join("::")
       begin
-        return eval(fqn)
+        return eval(first_pass_name)
       rescue NameError
-
       end
-    end
+    }
     raise SlimError.new("message:<<COULD_NOT_INVOKE_CONSTRUCTOR #{class_name} in any module #{@modules.inspect}>>")
   end
 
