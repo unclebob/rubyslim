@@ -15,5 +15,9 @@ module TestModule
     def echo(x)
       x
     end
+
+    def null
+      nil
+    end
   end 
 end

@@ -44,17 +44,18 @@ class StatementExecutor
 
 
   def with_each_fully_qualified_class_name(class_name, &block)
-     (@modules.map{|module_name| module_name + "::" + class_name} << class_name).reverse.each &block
+    (@modules.map{|module_name| module_name + "::" + class_name} << class_name).reverse.each &block
   end
+
   def require_class(class_name)
     with_each_fully_qualified_class_name(class_name) {|fully_qualified_name|
-        begin
-          require make_path_to_class(fully_qualified_name)
-          return
-        rescue LoadError
-        end
-      }
-     raise SlimError.new("message:<<COULD_NOT_INVOKE_CONSTRUCTOR #{class_name} failed to find in #{@modules.map{|mod| make_path_to_class(mod)}.inspect}>>")
+      begin
+        require make_path_to_class(fully_qualified_name)
+        return
+      rescue LoadError
+      end
+    }
+    raise SlimError.new("message:<<COULD_NOT_INVOKE_CONSTRUCTOR #{class_name} failed to find in #{@modules.map{|mod| make_path_to_class(mod)}.inspect}>>")
   end
 
   def get_class(class_name)
@@ -98,13 +99,16 @@ class StatementExecutor
   def get_symbol(name)
     @symbols[name]
   end
+
   def replace_symbols(list)
     list.map do |item|
-      item.gsub(/\$\w*/) do |match|
-         get_symbol(match[1..-1])
+      if item.kind_of?(Array)
+        replace_symbols(item)
+      else
+        item.gsub(/\$\w*/) do |match|
+          get_symbol(match[1..-1])
+        end
       end
     end
   end
-
-
 end
