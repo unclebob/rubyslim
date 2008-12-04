@@ -41,9 +41,13 @@ class StatementExecutor
     end
   end
 
+
+  def with_fully_qualified_class_name(class_name, &block)
+     (@modules.map{|module_name| module_name + "::" + class_name} << class_name).reverse.each &block
+  end
   def require_class(class_name)
-    (@modules.map{|module_name| module_name + "::" + class_name} << class_name).reverse.each {|fqn|
-        path = make_path_to_class(fqn)
+    with_fully_qualified_class_name(class_name) {|class_name|
+        path = make_path_to_class(class_name)
         begin
           require path
           return
@@ -54,7 +58,7 @@ class StatementExecutor
   end
 
   def get_class(class_name)
-    (@modules.map{|module_name| module_name + "::" + class_name} << class_name).reverse.each {|class_name|
+    with_fully_qualified_class_name(class_name) {|class_name|
       module_names = split_class_name(class_name)
       first_pass_name = module_names.join("::")
       begin
