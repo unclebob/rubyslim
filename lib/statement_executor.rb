@@ -80,6 +80,7 @@ class StatementExecutor
   def call(instance_name, method_name, *args)
     begin
       instance = @instances[instance_name]
+      raise SlimError.new("message:<<NO_INSTANCE #{instance_name}>>") if instance.nil?
       method = method_name.to_sym
       raise SlimError.new("message:<<NO_METHOD_IN_CLASS #{method}[#{args.length}] #{instance.class.name}.>>") if !instance.respond_to?(method)
       instance.send(method, *replace_symbols(args))

@@ -19,5 +19,13 @@ module TestModule
     def null
       nil
     end
+
+    def echo_int i
+      i
+    end
+
+    def echo_string s
+      s
+    end
   end 
 end
