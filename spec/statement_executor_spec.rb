@@ -6,8 +6,7 @@ describe StatementExecutor do
     @executor = StatementExecutor.new
   end
 
-  it "should split class names with dots" do
-    @executor.split_class_name("a.b.c").should == ["a", "b", "c"]
+  it "should split class names" do
     @executor.split_class_name("a::b::c").should == ["a", "b", "c"]
   end
 
@@ -16,15 +15,12 @@ describe StatementExecutor do
   end
 
   it "should build the path name to a class" do
-    @executor.make_path_to_class("ModuleOne::ModuleTwo.MyClass").should == "module_one/module_two/my_class"
+    @executor.make_path_to_class("ModuleOne::ModuleTwo::MyClass").should == "module_one/module_two/my_class"
   end
 
   it "should require a class" do
-      proc = proc {@executor.require_class("MyModule::MyClass")}
-      proc.should raise_error(SlimError, "message:<<COULD_NOT_INVOKE_CONSTRUCTOR my_module/my_class>>")
-  end
-
-  it "should build a fully qualified class name" do
-    @executor.make_module_path("MyModule.MyClass").should == "MyModule::MyClass"
+    @executor.add_module("MyModule")
+    proc = proc {@executor.require_class("MyModule::MyClass")}
+    proc.should raise_error(SlimError, /message:<<COULD_NOT_INVOKE_CONSTRUCTOR MyModule::MyClass failed to find in/)
   end
 end

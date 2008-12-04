@@ -29,7 +29,7 @@ class StatementExecutor
   end
 
   def split_class_name(class_name)
-    class_name.split(/\.|\:\:/)
+    class_name.split(/\:\:/)
   end
 
   def construct(class_name, constructor_arguments)
@@ -37,7 +37,7 @@ class StatementExecutor
     begin
       class_object.new(*constructor_arguments)
     rescue ArgumentError => e
-      raise SlimError.new("message:<<COULD_NOT_INVOKE_CONSTRUCTOR #{fully_qualified_class_name}[#{constructor_arguments.length}]>>")
+      raise SlimError.new("message:<<COULD_NOT_INVOKE_CONSTRUCTOR #{class_name}[#{constructor_arguments.length}]>>")
     end
   end
 
@@ -53,7 +53,7 @@ class StatementExecutor
         rescue LoadError
         end
       }
-     raise SlimError.new("message:<<COULD_NOT_INVOKE_CONSTRUCTOR #{path}>>")
+     raise SlimError.new("message:<<COULD_NOT_INVOKE_CONSTRUCTOR #{class_name} failed to find in #{@modules.map{|mod| make_path_to_class(mod)}.inspect}>>")
   end
 
   def get_class(class_name)
