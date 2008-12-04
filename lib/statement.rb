@@ -20,6 +20,7 @@ class Statement
       [id, @executor.create(instance_name, class_name, get_args(4))]
     when "import"
       @executor.add_module(slim_to_ruby_class(get_word(2)))
+      [id, "OK"]
     when  "call"
       call_method_at_index(2)
     when "callAndAssign"

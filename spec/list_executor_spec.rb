@@ -8,15 +8,6 @@ describe ListExecutor do
     @statements = []
     add_statement "i1", "import", "TestModule"
     add_statement "m1", "make", "test_slim", "TestSlim"
-    @expected_results = []
-    @expected_results << ["i1", "OK"]
-    @expected_results << ["m1", "OK"]
-  end
-
-  it "can't execute an invalid operation" do
-    add_statement "inv1", "invalidOperation"
-    results = @executor.execute(@statements)
-    get_result("inv1", results).should include(Statement::EXCEPTION_TAG+"message:<<INVALID_STATEMENT: [\"inv1\", \"invalidOperation\"].")
   end
 
   def get_result(id, result_list)
@@ -37,10 +28,19 @@ describe ListExecutor do
     results = @executor.execute(@statements)
     expectations.each_pair {|id, expected|
       get_result(id, results).should == expected
-
     }
   end
- 
+
+  it "can respond with OK to import" do
+    check_results "i1"=>"OK"
+  end
+
+  it "can't execute an invalid operation" do
+    add_statement "inv1", "invalidOperation"
+    results = @executor.execute(@statements)
+    get_result("inv1", results).should include(Statement::EXCEPTION_TAG+"message:<<INVALID_STATEMENT: [\"inv1\", \"invalidOperation\"].")
+  end
+
   it "can't execute a malformed instruction" do
     add_statement "id", "call", "notEnoughArguments"
     message = "message:<<MALFORMED_INSTRUCTION [\"id\", \"call\", \"notEnoughArguments\"].>>"
