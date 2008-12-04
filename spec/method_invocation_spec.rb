@@ -3,33 +3,38 @@ require "statement_executor"
 
 describe StatementExecutor do
   before do
-    @caller = StatementExecutor.new
-    @caller.create("test_slim", "TestModule::TestSlim", [])
-    @test_slim = @caller.instance("test_slim")
+    @executor = StatementExecutor.new
+    @executor.create("test_slim", "TestModule::TestSlim", [])
+    @test_slim = @executor.instance("test_slim")
   end
 
   it "can call a method with no arguments" do
     @test_slim.should_receive(:no_args).with()
-    @caller.call("test_slim", "no_args")
+    @executor.call("test_slim", "no_args")
   end
 
   it "can't call a method that doesn't exist" do
-      result = @caller.call("test_slim", "no_such_method")
+      result = @executor.call("test_slim", "no_such_method")
       result.should include(Statement::EXCEPTION_TAG + "message:<<NO_METHOD_IN_CLASS no_such_method[0] TestModule::TestSlim.>>")
   end
 
   it "can call a method that returns a value" do
     @test_slim.should_receive(:return_value).and_return("arg")
-    @caller.call("test_slim", "return_value").should == "arg"
+    @executor.call("test_slim", "return_value").should == "arg"
   end
 
   it "can call a method that takes an argument" do
     @test_slim.should_receive(:one_arg).with("arg")
-    @caller.call("test_slim", "one_arg", "arg")
+    @executor.call("test_slim", "one_arg", "arg")
   end
 
   it "can't call a method on an instance that doesn't exist" do
-    result = @caller.call("no_such_instance", "no_such_method")
+    result = @executor.call("no_such_instance", "no_such_method")
     result.should include(Statement::EXCEPTION_TAG + "message:<<NO_METHOD_IN_CLASS no_such_method[0] NilClass.>>")
+  end
+
+  it "can replace symbol expressions with their values" do
+    @executor.set_symbol("v", "bob")
+    @executor.call("test_slim", "echo", "hi $v.").should == "hi bob."
   end
 end

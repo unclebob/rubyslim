@@ -88,7 +88,12 @@ describe ListExecutor do
   end
 
   it "can assign the return value to a symbol" do
-    
+    add_statement "id1", "callAndAssign", "v", "test_slim", "add", "x", "y"
+    add_statement "id2", "call", "test_slim", "echo", "$v"
+    results = @executor.execute(@statements)
+
+    get_result("id1", results).should == "xy"
+    get_result("id2", results).should == "xy"
   end
 
   def add_statement(*args)

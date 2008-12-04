@@ -5,6 +5,7 @@ class StatementExecutor
   def initialize
     @instances = {}
     @modules = []
+    @symbols = {}
   end
 
   def create(instance_name, class_name, constructor_arguments)
@@ -80,7 +81,7 @@ class StatementExecutor
       instance = @instances[instance_name]
       method = method_name.to_sym
       raise SlimError.new("message:<<NO_METHOD_IN_CLASS #{method}[#{args.length}] #{instance.class.name}.>>") if !instance.respond_to?(method)
-      instance.send(method, *args)
+      instance.send(method, *replace_symbols(args))
     rescue SlimError => e
       Statement::EXCEPTION_TAG + e.to_s
     end
@@ -88,6 +89,21 @@ class StatementExecutor
 
   def add_module(module_name)
     @modules << module_name.gsub(/\./, '::')
+  end
+
+  def set_symbol(name, value)
+    @symbols[name] = value
+  end
+
+  def get_symbol(name)
+    @symbols[name]
+  end
+  def replace_symbols(list)
+    list.map do |item|
+      item.gsub(/\$\w*/) do |match|
+         get_symbol(match[1..-1])
+      end
+    end
   end
 
 

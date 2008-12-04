@@ -11,5 +11,9 @@ module TestModule
     def add(a,b)
       a+b
     end
+
+    def echo(x)
+      x
+    end
   end 
 end

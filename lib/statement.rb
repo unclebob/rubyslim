@@ -22,6 +22,10 @@ class Statement
       @executor.add_module(slim_to_ruby_class(get_word(2)))
     when  "call"
       call_method_at_index(2)
+    when "callAndAssign"
+      result = call_method_at_index(3)
+      @executor.set_symbol(get_word(2), result[1])
+      result
     else
       [id, EXCEPTION_TAG+"message:<<INVALID_STATEMENT: #{@statement.inspect}.>>"]
     end
