@@ -19,7 +19,7 @@ class Statement
       class_name = slim_to_ruby_class(get_word(3))
       [id, @executor.create(instance_name, class_name, get_args(4))]
     when "import"
-      @executor.add_module(get_word(2))
+      @executor.add_module(slim_to_ruby_class(get_word(2)))
     when  "call"
       call_method_at_index(2)
     else
