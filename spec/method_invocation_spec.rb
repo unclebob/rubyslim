@@ -30,7 +30,7 @@ describe StatementExecutor do
 
   it "can't call a method on an instance that doesn't exist" do
     result = @executor.call("no_such_instance", "no_such_method")
-    result.should include(Statement::EXCEPTION_TAG + "message:<<NO_METHOD_IN_CLASS no_such_method[0] NilClass.>>")
+    result.should include(Statement::EXCEPTION_TAG + "message:<<NO_INSTANCE no_such_instance>>")
   end
 
   it "can replace symbol expressions with their values" do

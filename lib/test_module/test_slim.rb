@@ -27,5 +27,9 @@ module TestModule
     def echo_string s
       s
     end
+
+    def syntax_error
+      eval "1,2"
+    end
   end 
 end

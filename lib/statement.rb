@@ -12,24 +12,30 @@ class Statement
 
   def exec(executor)
     @executor = executor
-
-    case(operation)
-    when "make"
-      instance_name = get_word(2)
-      class_name = slim_to_ruby_class(get_word(3))
-      [id, @executor.create(instance_name, class_name, get_args(4))]
-    when "import"
-      @executor.add_module(slim_to_ruby_class(get_word(2)))
-      [id, "OK"]
-    when  "call"
-      call_method_at_index(2)
-    when "callAndAssign"
-      result = call_method_at_index(3)
-      @executor.set_symbol(get_word(2), result[1])
-      result
-    else
-      [id, EXCEPTION_TAG+"message:<<INVALID_STATEMENT: #{@statement.inspect}.>>"]
+    begin
+      case(operation)
+      when "make"
+        instance_name = get_word(2)
+        class_name = slim_to_ruby_class(get_word(3))
+        [id, @executor.create(instance_name, class_name, get_args(4))]
+      when "import"
+        @executor.add_module(slim_to_ruby_class(get_word(2)))
+        [id, "OK"]
+      when  "call"
+        call_method_at_index(2)
+      when "callAndAssign"
+        result = call_method_at_index(3)
+        @executor.set_symbol(get_word(2), result[1])
+        result
+      else
+        [id, EXCEPTION_TAG+"message:<<INVALID_STATEMENT: #{@statement.inspect}.>>"]
+      end
+    rescue SlimError => e
+      [id, EXCEPTION_TAG+e.message]
+    rescue Exception => e
+      [id, EXCEPTION_TAG + e.message + "\n" + e.backtrace.join("\n")]
     end
+
   end
 
   def call_method_at_index(index)

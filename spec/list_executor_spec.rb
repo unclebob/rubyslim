@@ -44,13 +44,14 @@ describe ListExecutor do
   it "can't execute a malformed instruction" do
     add_statement "id", "call", "notEnoughArguments"
     message = "message:<<MALFORMED_INSTRUCTION [\"id\", \"call\", \"notEnoughArguments\"].>>"
-    proc {@executor.execute(@statements)}.should raise_error(SlimError, message)
+    results = @executor.execute(@statements)
+    get_result("id", results).should include(Statement::EXCEPTION_TAG+message)
   end
 
   it "can't call a method on an instance that doesn't exist" do
     add_statement "id", "call", "no_such_instance", "no_such_method"
     results = @executor.execute(@statements)
-    get_result("id", results).should include(Statement::EXCEPTION_TAG+"message:<<NO_METHOD_IN_CLASS no_such_method[0] NilClass.>>")
+    get_result("id", results).should include(Statement::EXCEPTION_TAG+"message:<<NO_INSTANCE no_such_instance>>")
   end
 
   it "should respond to an empty set of instructions with an empty set of results" do
@@ -121,6 +122,12 @@ describe ListExecutor do
   it "can return null" do
     add_statement "id", "call", "test_slim", "null"
     check_results "id" => nil
+  end
+  
+  it "can survive executing a syntax error" do
+    add_statement "id", "call", "test_slim", "syntax_error"
+    results = @executor.execute(@statements)
+    get_result("id", results).should include(Statement::EXCEPTION_TAG)
   end
 
 end
