@@ -29,21 +29,21 @@ describe ListDeserializer do
     deserialized.should == @list
   end
 
-  it "should deserialize and empty list" do
+  it "can deserialize and empty list" do
     check
   end
 
-  it "should deserialize a list with one element" do
+  it "can deserialize a list with one element" do
     @list = ["hello"]
     check
   end
 
-  it "should deserialize a list with two elements" do
+  it "can deserialize a list with two elements" do
     @list = ["hello", "bob"]
     check
   end
 
-  it "should deserialize sublists" do
+  it "can deserialize sublists" do
     @list = ["hello", ["bob", "micah"], "today"]
     check
   end

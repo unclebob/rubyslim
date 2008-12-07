@@ -6,19 +6,19 @@ describe StatementExecutor do
     @executor = StatementExecutor.new
   end
 
-  it "should split class names" do
+  it "can split class names" do
     @executor.split_class_name("a::b::c").should == ["a", "b", "c"]
   end
 
-  it "should convert module names to file names" do
+  it "can convert module names to file names" do
     @executor.to_file_name("MyModuleName").should == "my_module_name"
   end
 
-  it "should build the path name to a class" do
+  it "can build the path name to a class" do
     @executor.make_path_to_class("ModuleOne::ModuleTwo::MyClass").should == "module_one/module_two/my_class"
   end
 
-  it "should require a class" do
+  it "can require a class" do
     @executor.add_module("MyModule")
     proc = proc {@executor.require_class("MyModule::MyClass")}
     proc.should raise_error(SlimError, /message:<<COULD_NOT_INVOKE_CONSTRUCTOR MyModule::MyClass failed to find in/)
