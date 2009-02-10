@@ -106,6 +106,11 @@ describe ListExecutor do
     add_statement "id3", "call", "test_slim", "echo", "name: $v1 $v2"
     check_results "id3" => "name: Bob Martin"
   end
+  
+  it "should ignore '$' if what follows is not a symbol" do
+    add_statement "id3", "call", "test_slim", "echo", "$v1"
+    check_results "id3" => "$v1"
+  end
 
   it "can pass and return a list" do
     l = ["1", "2"]

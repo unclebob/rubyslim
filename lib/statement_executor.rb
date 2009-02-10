@@ -107,7 +107,9 @@ class StatementExecutor
         replace_symbols(item)
       else
         item.gsub(/\$\w*/) do |match|
-          get_symbol(match[1..-1])
+          symbol = get_symbol(match[1..-1])
+          symbol = match if symbol.nil? 
+          symbol 
         end
       end
     end
