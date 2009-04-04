@@ -25,4 +25,8 @@ describe ListSerializer do
   it "can serialize a null element" do
     ListSerializer.serialize([nil]).should == "[000001:000004:null:]"
   end
+  
+  it "can serialize a string with multibyte chars" do
+    ListSerializer.serialize(["Köln"]).should == "[000001:000004:Köln:]"
+  end
 end

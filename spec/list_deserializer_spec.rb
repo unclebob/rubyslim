@@ -47,6 +47,16 @@ describe ListDeserializer do
     @list = ["hello", ["bob", "micah"], "today"]
     check
   end
+  
+  it "can deserialize lists with multibyte strings" do
+    @list = ["Köln"]
+    check
+  end 
+  
+  it "can deserialize lists of strings that end with multibyte chars" do
+    @list = ["Kö"]
+    check
+  end
 
 
 end

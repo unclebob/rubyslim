@@ -1,3 +1,4 @@
+require 'jcode'
 module ListDeserializer
   class SyntaxError < Exception
 
@@ -22,8 +23,13 @@ module ListDeserializer
       number_of_items = get_length
       number_of_items.times do
         length_of_item = get_length
-        item = @string[@pos...@pos+length_of_item]
-        @pos += length_of_item+1
+        item = @string[@pos...@pos+length_of_item]  
+        length_in_bytes = length_of_item 
+        until (item.jlength == length_of_item) && (@string[@pos+length_in_bytes,1] == ':') do 
+          length_in_bytes += 1
+          item = @string[@pos...@pos+length_in_bytes]           
+        end   
+        @pos += length_in_bytes+1
         begin
           sublist = ListDeserializer.deserialize(item)
           @list << sublist

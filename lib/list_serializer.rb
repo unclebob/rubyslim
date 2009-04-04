@@ -1,3 +1,4 @@
+require 'jcode'
 module ListSerializer
   def self.serialize(list)
     result = "["
@@ -6,7 +7,7 @@ module ListSerializer
       item = "null" if item.nil?
       item = serialize(item) if item.is_a?(Array)
       item = item.to_s
-      result += length_string(item.length)
+      result += length_string(item.jlength)
       result += item + ":"
     end
     result += "]"
