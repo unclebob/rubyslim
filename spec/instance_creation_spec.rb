@@ -7,7 +7,7 @@ describe StatementExecutor do
   end
 
   it "can create an instance" do
-    response = @caller.create("x", "TestModule::TestSlim",[])
+    response = @caller.create("x", "TestModule::TestSlim", [])
     response.should == "OK"
     x = @caller.instance("x")
     x.class.name.should == "TestModule::TestSlim"
@@ -15,6 +15,14 @@ describe StatementExecutor do
 
   it "can create an instance with arguments" do
     response = @caller.create("x", "TestModule::TestSlimWithArguments", ["3"])
+    response.should == "OK"
+    x = @caller.instance("x")
+    x.arg.should == "3"
+  end
+
+  it "can create an instance with arguments that are symbols" do
+    @caller.set_symbol("X", "3")
+    response = @caller.create("x", "TestModule::TestSlimWithArguments", ["$X"])
     response.should == "OK"
     x = @caller.instance("x")
     x.arg.should == "3"

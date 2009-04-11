@@ -10,7 +10,7 @@ class StatementExecutor
 
   def create(instance_name, class_name, constructor_arguments)
     begin
-      @instances[instance_name] = construct_instance(class_name, constructor_arguments);
+      @instances[instance_name] = construct_instance(class_name, replace_symbols(constructor_arguments))
       "OK"
     rescue SlimError => e
       Statement::EXCEPTION_TAG + e.to_s
@@ -48,23 +48,23 @@ class StatementExecutor
   end
 
   def require_class(class_name)
-    with_each_fully_qualified_class_name(class_name) {|fully_qualified_name|
+    with_each_fully_qualified_class_name(class_name) do |fully_qualified_name|
       begin
         require make_path_to_class(fully_qualified_name)
         return
       rescue LoadError
       end
-    }
+    end
     raise SlimError.new("message:<<COULD_NOT_INVOKE_CONSTRUCTOR #{class_name} failed to find in #{@modules.map{|mod| make_path_to_class(mod)}.inspect}>>")
   end
 
   def get_class(class_name)
-    with_each_fully_qualified_class_name(class_name) {|fully_qualified_name|
+    with_each_fully_qualified_class_name(class_name) do |fully_qualified_name|
       begin
         return eval(fully_qualified_name)
       rescue NameError
       end
-    }
+    end
     raise SlimError.new("message:<<COULD_NOT_INVOKE_CONSTRUCTOR #{class_name} in any module #{@modules.inspect}>>")
   end
 
