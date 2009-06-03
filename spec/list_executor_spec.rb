@@ -68,6 +68,13 @@ describe ListExecutor do
     check_results "m1" => "OK","id"=>"string"
   end
 
+  it "can call a simple method in ruby form" do
+    add_statement "id", "call", "test_slim", "utf8"
+
+    check_results "m1" => "OK","id"=>"Espa\357\277\275ol"
+  end
+
+
   it "can call a simple method in FitNesse form" do
     add_statement "id", "call", "test_slim", "returnString"
 

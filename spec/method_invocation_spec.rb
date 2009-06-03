@@ -23,6 +23,14 @@ describe StatementExecutor do
     @executor.call("test_slim", "return_value").should == "arg"
   end
 
+  it "can call a method that returns a value" do
+    @test_slim.should_receive(:return_value).and_return("Espa\357\277\275ol")
+    val = @executor.call("test_slim", "return_value")
+    val.should == "Espa\357\277\275ol"
+    val.jlength.should == 7    
+  end
+
+
   it "can call a method that takes an argument" do
     @test_slim.should_receive(:one_arg).with("arg")
     @executor.call("test_slim", "one_arg", "arg")

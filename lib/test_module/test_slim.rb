@@ -31,5 +31,10 @@ module TestModule
     def syntax_error
       eval "1,2"
     end
+    
+    def utf8
+      "Espa\357\277\275ol"
+    end
+    
   end 
 end

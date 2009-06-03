@@ -58,5 +58,11 @@ describe ListDeserializer do
     check
   end
 
+  it "can deserialize lists with utf8" do
+    @list = ["123456789012345", "Espa\357\277\275ol"]
+    serialized = ListSerializer.serialize(@list)
+    check
+  end 
+
 
 end
