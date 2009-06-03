@@ -3,3 +3,4 @@ require "rubygems"
 require "spec"
 require 'jcode'
 $KCODE="UTF8"
+require 'timeout'

@@ -25,10 +25,14 @@ module ListDeserializer
         length_of_item = get_length
         item = @string[@pos...@pos+length_of_item]  
         length_in_bytes = length_of_item 
-        until (item.jlength == length_of_item) && (@string[@pos+length_in_bytes,1] == ':') do 
+        until (item.jlength > length_of_item) do 
           length_in_bytes += 1
           item = @string[@pos...@pos+length_in_bytes]           
         end   
+        length_in_bytes -= 1   
+        item = @string[@pos...@pos+length_in_bytes]                   
+        
+        raise SyntaxError.new("List Termination Character Not found #{@string[@pos+length_in_bytes,1].inspect}") unless (@string[@pos+length_in_bytes,1] == ':')
         @pos += length_in_bytes+1
         begin
           sublist = ListDeserializer.deserialize(item)
