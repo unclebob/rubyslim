@@ -6,6 +6,7 @@ describe ListExecutor do
   before do
     @executor = ListExecutor.new
     @statements = []
+    @table = "<table><tr><td>name</td><td>bob</td></tr><tr><td>addr</td><td>here</td></tr></table>"
     add_statement "i1", "import", "TestModule"
     add_statement "m1", "make", "test_slim", "TestSlim"
   end
@@ -65,33 +66,50 @@ describe ListExecutor do
   it "can call a simple method in ruby form" do
     add_statement "id", "call", "test_slim", "return_string"
 
-    check_results "m1" => "OK","id"=>"string"
+    check_results "m1" => "OK", "id"=>"string"
   end
 
   it "can call a simple method in ruby form" do
     add_statement "id", "call", "test_slim", "utf8"
 
-    check_results "m1" => "OK","id"=>"Espa\357\277\275ol"
+    check_results "m1" => "OK", "id"=>"Espa\357\277\275ol"
   end
 
 
   it "can call a simple method in FitNesse form" do
     add_statement "id", "call", "test_slim", "returnString"
 
-    check_results "m1"=>"OK","id"=>"string"
+    check_results "m1"=>"OK", "id"=>"string"
   end
 
   it "will allow later imports to take precendence over early imports" do
     @statements.insert(0, ["i2", "import", "TestModule.ShouldNotFindTestSlimInHere"])
     add_statement "id", "call", "test_slim", "return_string"
-    check_results "m1"=>"OK","id"=>"string"
+    check_results "m1"=>"OK", "id"=>"string"
   end
 
   it "can pass arguments to constructor" do
     add_statement "m2", "make", "test_slim_2", "TestSlimWithArguments", "3"
     add_statement "c1", "call", "test_slim_2", "arg"
 
-    check_results "m2"=>"OK","c1"=>"3"
+    check_results "m2"=>"OK", "c1"=>"3"
+  end
+
+  it "can pass tables to constructor" do
+    add_statement "m2", "make", "test_slim_2", "TestSlimWithArguments", @table
+    add_statement "c1", "call", "test_slim_2", "name"
+    add_statement "c2", "call", "test_slim_2", "addr"
+
+    check_results "m2"=>"OK", "c1"=>"bob", "c2"=>"here"
+  end
+
+  it "can pass tables to functions" do
+    add_statement "m2", "make", "test_slim_2", "TestSlimWithArguments", "nil"    
+    add_statement "c0", "call", "test_slim_2", "set_arg", @table
+    add_statement "c1", "call", "test_slim_2", "name"
+    add_statement "c2", "call", "test_slim_2", "addr"
+
+    check_results "m2"=>"OK", "c1"=>"bob", "c2"=>"here"
   end
 
   it "can call a function more than once" do
@@ -113,7 +131,7 @@ describe ListExecutor do
     add_statement "id3", "call", "test_slim", "echo", "name: $v1 $v2"
     check_results "id3" => "name: Bob Martin"
   end
-  
+
   it "should ignore '$' if what follows is not a symbol" do
     add_statement "id3", "call", "test_slim", "echo", "$v1"
     check_results "id3" => "$v1"
@@ -135,7 +153,7 @@ describe ListExecutor do
     add_statement "id", "call", "test_slim", "null"
     check_results "id" => nil
   end
-  
+
   it "can survive executing a syntax error" do
     add_statement "id", "call", "test_slim", "syntax_error"
     results = @executor.execute(@statements)

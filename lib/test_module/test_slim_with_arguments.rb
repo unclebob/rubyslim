@@ -7,5 +7,17 @@ module TestModule
     def arg
       @arg
     end
+
+    def name
+      @arg[:name]
+    end
+
+    def addr
+      @arg[:addr]
+    end
+
+    def set_arg(hash)
+      @arg = hash
+    end
   end
 end

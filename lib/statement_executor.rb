@@ -1,5 +1,6 @@
 require "slim_error"
 require "statement"
+require "table_to_hash_converter"
 
 class StatementExecutor
   def initialize
@@ -33,10 +34,17 @@ class StatementExecutor
     class_name.split(/\:\:/)
   end
 
+  def replace_tables_with_hashes(constructor_arguments)
+    args = constructor_arguments.map do |arg|
+      TableToHashConverter.convert arg
+    end
+    return args
+  end
+
   def construct(class_name, constructor_arguments)
     class_object = get_class(class_name)
     begin
-      class_object.new(*constructor_arguments)
+      class_object.new(*replace_tables_with_hashes(constructor_arguments))
     rescue ArgumentError => e
       raise SlimError.new("message:<<COULD_NOT_INVOKE_CONSTRUCTOR #{class_name}[#{constructor_arguments.length}]>>")
     end
@@ -83,7 +91,7 @@ class StatementExecutor
       raise SlimError.new("message:<<NO_INSTANCE #{instance_name}>>") if instance.nil?
       method = method_name.to_sym
       raise SlimError.new("message:<<NO_METHOD_IN_CLASS #{method}[#{args.length}] #{instance.class.name}.>>") if !instance.respond_to?(method)
-      instance.send(method, *replace_symbols(args))
+      instance.send(method, *replace_tables_with_hashes(replace_symbols(args)))
     rescue SlimError => e
       Statement::EXCEPTION_TAG + e.to_s
     end
