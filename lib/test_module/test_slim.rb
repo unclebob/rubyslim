@@ -1,5 +1,16 @@
 module TestModule
+  class SystemUnderTest
+    def sut_method
+      true
+    end
+  end
+
   class TestSlim
+    attr_reader :sut
+    def initialize
+      @sut = SystemUnderTest.new
+    end
+
     def return_string
       "string"
     end
@@ -8,7 +19,7 @@ module TestModule
       "blah"
     end
 
-    def add(a,b)
+    def add(a, b)
       a+b
     end
 
@@ -31,10 +42,10 @@ module TestModule
     def syntax_error
       eval "1,2"
     end
-    
+
     def utf8
       "Espa\357\277\275ol"
     end
-    
-  end 
+
+  end
 end

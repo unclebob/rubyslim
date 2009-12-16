@@ -90,3 +90,28 @@ This corresponds to the following tables.
 
 Note the use of the HashWidgets in the table cells.  These get translated into HTML, which RubySlim recognizes and converts
 to a standard ruby hash.
+
+System Under Test
+
+If a fixture has a 'sut' method that returns an object, then if a method called by a test is not found in the fixture itself,
+then if it exists in the object returned by 'sut' it will be called.   For example:
+
+!|script|my fixture|
+|func|1|
+
+class MySystem
+  def func(x)
+    #this is the function that will be called.
+  end
+end
+
+class MyFixture
+  attr_reader :sut
+
+  def initialize
+    @sut = MySystem.new
+  end
+end
+
+Since the fixture 'MyFixture' does not have a function named 'func', but it _does_ have a method named 'sut',
+RubySlim will try to call 'func' on the object returned by 'sut'.

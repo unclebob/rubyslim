@@ -85,13 +85,22 @@ class StatementExecutor
     value.gsub(/[A-Z]/) { |cap| "_#{cap.downcase}" }
   end
 
+  def send_message_to_instance(instance, method, args)
+    instance.send(method, *replace_tables_with_hashes(replace_symbols(args)))
+  end
+
   def call(instance_name, method_name, *args)
     begin
       instance = @instances[instance_name]
       raise SlimError.new("message:<<NO_INSTANCE #{instance_name}>>") if instance.nil?
       method = method_name.to_sym
-      raise SlimError.new("message:<<NO_METHOD_IN_CLASS #{method}[#{args.length}] #{instance.class.name}.>>") if !instance.respond_to?(method)
-      instance.send(method, *replace_tables_with_hashes(replace_symbols(args)))
+      if instance.respond_to?(method)
+        send_message_to_instance(instance, method, args)
+      elsif instance.respond_to?(:sut) && instance.sut.respond_to?(method)
+        send_message_to_instance(instance.sut, method, args)
+      else
+        raise SlimError.new("message:<<NO_METHOD_IN_CLASS #{method}[#{args.length}] #{instance.class.name}.>>")
+      end
     rescue SlimError => e
       Statement::EXCEPTION_TAG + e.to_s
     end
@@ -116,8 +125,8 @@ class StatementExecutor
       else
         item.gsub(/\$\w*/) do |match|
           symbol = get_symbol(match[1..-1])
-          symbol = match if symbol.nil? 
-          symbol 
+          symbol = match if symbol.nil?
+          symbol
         end
       end
     end
