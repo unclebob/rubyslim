@@ -7,11 +7,21 @@ class StatementExecutor
     @instances = {}
     @modules = []
     @symbols = {}
+    @libraries = []
+  end
+
+  def library?(instance_name)
+    library_prefix = "library"
+    instance_name[0, library_prefix.length] == library_prefix
   end
 
   def create(instance_name, class_name, constructor_arguments)
     begin
-      @instances[instance_name] = construct_instance(class_name, replace_symbols(constructor_arguments))
+      instance = construct_instance(class_name, replace_symbols(constructor_arguments))
+      if library?(instance_name)
+        @libraries << instance
+      end
+      @instances[instance_name] = instance
       "OK"
     rescue SlimError => e
       Statement::EXCEPTION_TAG + e.to_s
@@ -92,13 +102,16 @@ class StatementExecutor
   def call(instance_name, method_name, *args)
     begin
       instance = @instances[instance_name]
-      raise SlimError.new("message:<<NO_INSTANCE #{instance_name}>>") if instance.nil?
       method = method_name.to_sym
-      if instance.respond_to?(method)
+      if instance && instance.respond_to?(method)
         send_message_to_instance(instance, method, args)
       elsif instance.respond_to?(:sut) && instance.sut.respond_to?(method)
         send_message_to_instance(instance.sut, method, args)
       else
+        @libraries.reverse_each do |library|
+          return send_message_to_instance(library, method, args) if (library.respond_to?(method))
+        end
+        raise SlimError.new("message:<<NO_INSTANCE #{instance_name}>>") if instance.nil?        
         raise SlimError.new("message:<<NO_METHOD_IN_CLASS #{method}[#{args.length}] #{instance.class.name}.>>")
       end
     rescue SlimError => e

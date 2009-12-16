@@ -1,4 +1,4 @@
-Ruby Slim
+Ruby Slim Protocol (V0.1)
 ----------
 
 Setup.
@@ -115,3 +115,26 @@ end
 
 Since the fixture 'MyFixture' does not have a function named 'func', but it _does_ have a method named 'sut',
 RubySlim will try to call 'func' on the object returned by 'sut'.
+
+Library Fixtures
+
+Ruby Slim supports the |Library| feature of FitNesse.  If you declare certain classes to be libraries, then if a
+test calls a method, and the specified fixture does not have it, and there is no specified 'sut', then the libraries
+will be searched in reverse order (latest first).  If the method is found, then it is called.
+
+For example
+
+|Library|
+|echo fixture|
+
+|script|
+|check|echo|a|a|
+
+class EchoFixture
+  def echo(x)
+    x
+  end
+end
+
+Here, even though no fixture was specified for the script table, since a library was declared, functions will be
+called on it.
