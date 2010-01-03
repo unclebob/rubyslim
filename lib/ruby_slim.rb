@@ -18,7 +18,7 @@ class RubySlim
   end
 
   def serve_ruby_slim(socket)
-    socket.puts("Slim -- V0.0");
+    socket.puts("Slim -- V0.1");
     said_bye = false
     while !said_bye
       length = socket.read(6).to_i
