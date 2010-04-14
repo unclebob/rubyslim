@@ -29,7 +29,7 @@ class SocketServiceTest < Test::Unit::TestCase
       serverSocket.write("hi")
     end
 
-    clientSocket = TCPsocket.open("localhost", @port)
+    clientSocket = TCPSocket.open("localhost", @port)
     answer = clientSocket.gets
     clientSocket.close
     assert_equal("hi", answer)
@@ -91,7 +91,7 @@ class SocketServiceTest < Test::Unit::TestCase
   end
 
   def connect(port)
-    s = TCPsocket.open("localhost", @port)
+    s = TCPSocket.open("localhost", @port)
     sleep(0.1)
     s.close
   end

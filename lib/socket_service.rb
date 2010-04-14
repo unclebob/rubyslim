@@ -15,7 +15,7 @@ class SocketService
   def serve(port, &action)
     @closed = false
     @action = action
-    @ropeSocket = TCPserver.open(port)
+    @ropeSocket = TCPServer.open(port)
     @serviceThread = Thread.start {serviceTask}
     @group.add(@serviceThread)
   end
