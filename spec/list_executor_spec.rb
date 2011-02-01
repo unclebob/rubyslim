@@ -160,4 +160,16 @@ describe ListExecutor do
     get_result("id", results).should include(Statement::EXCEPTION_TAG)
   end
 
+  it "can make a fixture from the name in a symbol" do
+    add_statement "id1", "callAndAssign", "test_system", "test_slim", "echo", "TestChain"
+    add_statement "id2", "make", "fixture_instance1", "$test_system"
+    check_results "id2"=>"OK"
+  end
+
+  it "can make a fixture from a concatonated symbol" do
+    add_statement "id1", "callAndAssign", "test_system", "test_slim", "echo", "Chain"
+    add_statement "id2", "make", "fixture_instance1", "Test$test_system"
+    check_results "id2"=>"OK"
+  end
+
 end

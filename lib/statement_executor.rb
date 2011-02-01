@@ -17,7 +17,7 @@ class StatementExecutor
 
   def create(instance_name, class_name, constructor_arguments)
     begin
-      instance = construct_instance(class_name, replace_symbols(constructor_arguments))
+      instance = construct_instance(replace_symbol(class_name), replace_symbols(constructor_arguments))
       if library?(instance_name)
         @libraries << instance
       end
@@ -131,16 +131,20 @@ class StatementExecutor
     @symbols[name]
   end
 
+  def replace_symbol(item)
+    item.gsub(/\$\w*/) do |match|
+      symbol = get_symbol(match[1..-1])
+      symbol = match if symbol.nil?
+      symbol
+    end
+  end
+
   def replace_symbols(list)
     list.map do |item|
       if item.kind_of?(Array)
         replace_symbols(item)
       else
-        item.gsub(/\$\w*/) do |match|
-          symbol = get_symbol(match[1..-1])
-          symbol = match if symbol.nil?
-          symbol
-        end
+        replace_symbol(item)
       end
     end
   end
