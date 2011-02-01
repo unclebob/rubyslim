@@ -17,10 +17,14 @@ class StatementExecutor
 
   def create(instance_name, class_name, constructor_arguments)
     begin
-      instance = construct_instance(replace_symbol(class_name), replace_symbols(constructor_arguments))
-      if library?(instance_name)
-        @libraries << instance
+      instance = replace_symbol(class_name)
+      if instance.is_a?(String)
+        instance = construct_instance(instance, replace_symbols(constructor_arguments))
+        if library?(instance_name)
+          @libraries << instance
+        end
       end
+
       @instances[instance_name] = instance
       "OK"
     rescue SlimError => e
@@ -96,7 +100,8 @@ class StatementExecutor
   end
 
   def send_message_to_instance(instance, method, args)
-    instance.send(method, *replace_tables_with_hashes(replace_symbols(args)))
+    symbols = replace_symbols(args)
+    instance.send(method, *replace_tables_with_hashes(symbols))
   end
 
   def call(instance_name, method_name, *args)
@@ -131,11 +136,18 @@ class StatementExecutor
     @symbols[name]
   end
 
+  def acquire_symbol(symbol_text)
+    symbol = get_symbol(symbol_text[1..-1])
+    symbol = symbol_text if symbol.nil?
+    symbol
+  end
+
   def replace_symbol(item)
+    match = item.match(/\A\$\w*\z/)
+    return acquire_symbol(match[0]) if match
+
     item.gsub(/\$\w*/) do |match|
-      symbol = get_symbol(match[1..-1])
-      symbol = match if symbol.nil?
-      symbol
+      acquire_symbol(match)
     end
   end
 

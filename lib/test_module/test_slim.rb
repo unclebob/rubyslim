@@ -1,3 +1,5 @@
+require 'ostruct'
+
 module TestModule
   class SystemUnderTest
     def sut_method
@@ -7,12 +9,15 @@ module TestModule
 
   class TestSlim
     attr_reader :sut
-    def initialize
+    attr_accessor :string
+    def initialize(generation = 0)
+      @generation = generation
       @sut = SystemUnderTest.new
+      @string = "string"
     end
 
     def return_string
-      "string"
+      @string
     end
 
     def returnString  #Should not ever be called.
@@ -46,6 +51,34 @@ module TestModule
     def utf8
       "Espa\357\277\275ol"
     end
+
+    def create_test_slim_with_string(string)
+      slim = TestSlim.new(@generation + 1)
+      slim.string = string
+      slim
+    end
+
+    def new_with_string(string)
+      s = TestSlim.new
+      s.string = string
+      s
+    end
+
+    def echo_object(method, string)
+      OpenStruct.new(method.to_sym => string)
+    end
+
+    def call_on(method, object)
+      object.send(method.to_sym)
+    end
+
+#    def is_same(other)
+#      self === other
+#    end
+#
+#    def  get_string_from_other other
+#      other.get_string_arg
+#    end
 
   end
 end

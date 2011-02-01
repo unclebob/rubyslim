@@ -172,4 +172,17 @@ describe ListExecutor do
     check_results "id2"=>"OK"
   end
 
+  it "can use a fixture method that returns a fixture object" do
+    add_statement "id1", "callAndAssign", "object", "test_slim", "echo_object", "let_me_see", "Boogaloo"
+    add_statement "id2", "call", "test_slim", "call_on", "let_me_see", "$object"
+    check_results "id2" => "Boogaloo"
+  end
+
+  it "can use an instance that was stored as a symbol" do
+    add_statement "id1", "callAndAssign", "test_slim_instance", "test_slim", "create_test_slim_with_string", "Boogaloo"
+    add_statement "m2", "make", "test_slim", "$test_slim_instance"
+    check_results "m2" => "OK"
+
+  end
+
 end

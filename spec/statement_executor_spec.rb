@@ -23,4 +23,10 @@ describe StatementExecutor do
     proc = proc {@executor.require_class("MyModule::MyClass")}
     proc.should raise_error(SlimError, /message:<<COULD_NOT_INVOKE_CONSTRUCTOR MyModule::MyClass failed to find in/)
   end
+
+  it "can handle symbols whose values are objects" do
+    @executor.set_symbol("foo", OpenStruct.new(:foo => "bar"))
+    @executor.get_symbol("foo").foo.should == "bar"
+    @executor.replace_symbol("$foo").foo.should == "bar"
+  end
 end
