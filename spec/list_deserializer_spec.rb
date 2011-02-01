@@ -63,9 +63,4 @@ describe ListDeserializer do
     check
   end 
 
-  it "should raise error when extended ascii charaters are used" do
-    serialized ="[000002:000119:[000006:000015:scriptTable_3_0:000004:call:000016:scriptTableActor:000005:setTo:000015:System\\Language:000007:Espa\361ol:]:000033:[000002:000005:hello:000003:bob:]:]"    
-    proc {Timeout::timeout(1.5){deserialized = ListDeserializer.deserialize(serialized)}.should_not raise_error(Timeout::Error)}.should raise_error(ListDeserializer::SyntaxError)
-  end
-  
 end

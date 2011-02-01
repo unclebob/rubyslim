@@ -31,7 +31,7 @@ describe ListSerializer do
   end
 
   it "can serialize a string with UTF8" do
-    ListSerializer.serialize(["Espa\357\277\275ol"]).should == "[000001:000007:Espa\357\277\275ol:]"
+    ListSerializer.serialize(["Español"]).should == "[000001:000007:Espa\xc3\xb1ol:]"
   end
   
   

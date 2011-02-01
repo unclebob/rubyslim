@@ -27,9 +27,9 @@ describe StatementExecutor do
     end
 
     it "can call a method that returns a value" do
-      @test_slim.should_receive(:return_value).and_return("Espa\357\277\275ol")
+      @test_slim.should_receive(:return_value).and_return("Español")
       val = @executor.call("test_slim", "return_value")
-      val.should == "Espa\357\277\275ol"
+      val.should == "Español"
       val.jlength.should == 7
     end
 
