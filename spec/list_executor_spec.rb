@@ -182,7 +182,6 @@ describe ListExecutor do
     add_statement "id1", "callAndAssign", "test_slim_instance", "test_slim", "create_test_slim_with_string", "Boogaloo"
     add_statement "m2", "make", "test_slim", "$test_slim_instance"
     check_results "m2" => "OK"
-
   end
 
 end

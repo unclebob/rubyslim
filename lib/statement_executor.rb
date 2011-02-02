@@ -1,13 +1,14 @@
 require "slim_error"
 require "statement"
 require "table_to_hash_converter"
+require "slim_helper_library"
 
 class StatementExecutor
   def initialize
     @instances = {}
     @modules = []
     @symbols = {}
-    @libraries = []
+    @libraries = [SlimHelperLibrary.new(self)]
   end
 
   def library?(instance_name)
@@ -25,11 +26,15 @@ class StatementExecutor
         end
       end
 
-      @instances[instance_name] = instance
+      set_instance(instance_name, instance)
       "OK"
     rescue SlimError => e
       Statement::EXCEPTION_TAG + e.to_s
     end
+  end
+
+  def set_instance(instance_name, instance)
+    @instances[instance_name] = instance
   end
 
   def construct_instance(class_name, constructor_arguments)

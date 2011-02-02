@@ -108,5 +108,10 @@ describe StatementExecutor do
       @executor.call("test_slim", "a_method")
     end
 
+    it "should call built-in library methods" do
+      @executor.call("test_slim", "push_fixture").should == nil
+      @executor.call("test_slim", "pop_fixture").should == nil
+    end
+
   end
 end
