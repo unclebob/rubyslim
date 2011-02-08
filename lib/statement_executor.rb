@@ -25,7 +25,6 @@ class StatementExecutor
           @libraries << instance
         end
       end
-
       set_instance(instance_name, instance)
       "OK"
     rescue SlimError => e
@@ -71,7 +70,7 @@ class StatementExecutor
 
 
   def with_each_fully_qualified_class_name(class_name, &block)
-    (@modules.map{|module_name| module_name + "::" + class_name} << class_name).reverse.each &block
+    (@modules.map { |module_name| module_name + "::" + class_name } << class_name).reverse.each &block
   end
 
   def require_class(class_name)
@@ -82,7 +81,7 @@ class StatementExecutor
       rescue LoadError
       end
     end
-    raise SlimError.new("message:<<COULD_NOT_INVOKE_CONSTRUCTOR #{class_name} failed to find in #{@modules.map{|mod| make_path_to_class(mod)}.inspect}>>")
+    raise SlimError.new("message:<<COULD_NOT_INVOKE_CONSTRUCTOR #{class_name} failed to find in #{@modules.map { |mod| make_path_to_class(mod) }.inspect}>>")
   end
 
   def get_class(class_name)
@@ -109,20 +108,36 @@ class StatementExecutor
     instance.send(method, *replace_tables_with_hashes(symbols))
   end
 
+  def handles?(instance, method)
+    return false unless instance
+    return true if instance.respond_to?(method)
+    return true if method_name =~ /set_(\w+)/ && instance.respond_to?("#{$1}=")
+    return true if method_name =~ /get_(\w+)/ && instance.respond_to?($1)
+    return false
+  end
+
+  def method_to_call(instance, method_name)
+    return nil unless instance
+    return method_name.to_sym if instance.respond_to?(method_name)
+    return "#{$1}=".to_sym if method_name =~ /set_(\w+)/ && instance.respond_to?("#{$1}=")
+    return $1.to_sym if method_name =~ /get_(\w+)/ && instance.respond_to?($1)
+    return nil
+  end
+
   def call(instance_name, method_name, *args)
     begin
-      instance = @instances[instance_name]
-      method = method_name.to_sym
-      if instance && instance.respond_to?(method)
+      instance = self.instance(instance_name)
+      if method = method_to_call(instance, method_name)
         send_message_to_instance(instance, method, args)
-      elsif instance.respond_to?(:sut) && instance.sut.respond_to?(method)
+      elsif instance.respond_to?(:sut) && method = method_to_call(instance.sut, method_name)
         send_message_to_instance(instance.sut, method, args)
       else
         @libraries.reverse_each do |library|
-          return send_message_to_instance(library, method, args) if (library.respond_to?(method))
+          method = method_to_call(library, method_name)
+          return send_message_to_instance(library, method, args) if method
         end
-        raise SlimError.new("message:<<NO_INSTANCE #{instance_name}>>") if instance.nil?        
-        raise SlimError.new("message:<<NO_METHOD_IN_CLASS #{method}[#{args.length}] #{instance.class.name}.>>")
+        raise SlimError.new("message:<<NO_INSTANCE #{instance_name}>>") if instance.nil?
+        raise SlimError.new("message:<<NO_METHOD_IN_CLASS #{method_name}[#{args.length}] #{instance.class.name}.>>")
       end
     rescue SlimError => e
       Statement::EXCEPTION_TAG + e.to_s

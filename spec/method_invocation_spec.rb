@@ -53,6 +53,11 @@ describe StatementExecutor do
       @test_slim.sut.should_receive(:sut_method).with()
       @executor.call("test_slim", "sut_method")
     end
+
+    it "should call attributes on sut" do
+      @executor.call("test_slim", "set_attribute", "a")
+      @executor.call("test_slim", "get_attribute").should == "a"
+    end
   end
 
   context "Method invocations using fixture with no sut" do
@@ -111,6 +116,11 @@ describe StatementExecutor do
     it "should call built-in library methods" do
       @executor.call("test_slim", "push_fixture").should == nil
       @executor.call("test_slim", "pop_fixture").should == nil
+    end
+
+    it "should translate getters and setters" do
+      @executor.call("test_slim", "set_lib_attribute", "lemon")
+      @executor.call("test_slim", "get_lib_attribute").should == "lemon"
     end
 
   end

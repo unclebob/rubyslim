@@ -29,4 +29,28 @@ describe StatementExecutor do
     @executor.get_symbol("foo").foo.should == "bar"
     @executor.replace_symbol("$foo").foo.should == "bar"
   end
+
+  describe "accessor translation" do
+    class TestInstance
+      attr_accessor :foo
+    end
+
+    before(:each) do
+      @instance = TestInstance.new
+      @executor.set_instance("test_instance", @instance)
+    end
+
+    it "should translate setters" do
+      @executor.call("test_instance", "set_foo", "123")
+      @instance.foo.should == "123"
+    end
+
+    it "should translate getters " do
+      @instance.foo = "bar"
+      @executor.call("test_instance", "get_foo").should == "bar"
+    end
+
+
+  end
+
 end
