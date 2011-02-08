@@ -2,6 +2,7 @@ require 'ostruct'
 
 module TestModule
   class SystemUnderTest
+    attr_accessor :attribute
     def sut_method
       true
     end
@@ -10,6 +11,7 @@ module TestModule
   class TestSlim
     attr_reader :sut
     attr_accessor :string
+
     def initialize(generation = 0)
       @generation = generation
       @sut = SystemUnderTest.new
