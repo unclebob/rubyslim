@@ -56,7 +56,7 @@ describe StatementExecutor do
 
     it "should call attributes on sut" do
       @executor.call("test_slim", "set_attribute", "a")
-      @executor.call("test_slim", "get_attribute").should == "a"
+      @executor.call("test_slim", "attribute").should == "a"
     end
   end
 
@@ -120,7 +120,7 @@ describe StatementExecutor do
 
     it "should translate getters and setters" do
       @executor.call("test_slim", "set_lib_attribute", "lemon")
-      @executor.call("test_slim", "get_lib_attribute").should == "lemon"
+      @executor.call("test_slim", "lib_attribute").should == "lemon"
     end
 
   end

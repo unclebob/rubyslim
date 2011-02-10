@@ -45,12 +45,6 @@ describe StatementExecutor do
       @instance.foo.should == "123"
     end
 
-    it "should translate getters " do
-      @instance.foo = "bar"
-      @executor.call("test_instance", "get_foo").should == "bar"
-    end
-
-
   end
 
 end

@@ -112,7 +112,7 @@ class StatementExecutor
     return nil unless instance
     return method_name.to_sym if instance.respond_to?(method_name)
     return "#{$1}=".to_sym if method_name =~ /set_(\w+)/ && instance.respond_to?("#{$1}=")
-    return $1.to_sym if method_name =~ /get_(\w+)/ && instance.respond_to?($1)
+#    return $1.to_sym if method_name =~ /get_(\w+)/ && instance.respond_to?($1)
     return nil
   end
 
