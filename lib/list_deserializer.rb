@@ -1,4 +1,5 @@
 require 'jcode'
+
 module ListDeserializer
   class SyntaxError < Exception
   end

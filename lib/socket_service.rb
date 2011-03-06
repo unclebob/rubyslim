@@ -11,7 +11,7 @@ class SocketService
     @group = ThreadGroup.new
     @serviceThread = nil
   end
-  
+
   def serve(port, &action)
     @closed = false
     @action = action
@@ -19,24 +19,24 @@ class SocketService
     @serviceThread = Thread.start {serviceTask}
     @group.add(@serviceThread)
   end
-  
+
   def pendingSessions
     @group.list.size - ((@serviceThread != nil) ? 1 : 0)
   end
-  
+
   def serviceTask
     while true
-      Thread.start(@ropeSocket.accept) do |s| 
-      	serverTask(s)
+      Thread.start(@ropeSocket.accept) do |s|
+        serverTask(s)
       end
     end
   end
-  
+
   def serverTask(s)
     @action.call(s)
     s.close
   end
-  
+
   def close
     @serviceThread.kill
     @serviceThread = nil
@@ -44,10 +44,10 @@ class SocketService
     waitForServers
     @closed = true
   end
-  
+
   def waitForServers
     @group.list.each do |t|
-    	t.join
+      t.join
     end
   end
 end
