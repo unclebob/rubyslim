@@ -1,11 +1,10 @@
 #!/usr/bin/env ruby
 
-#require File.expand_path(File.dirname(__FILE__) + "/init")
-require 'rubyslim/init'
 require 'rubyslim/ruby_slim'
-
 require 'jcode'
 $KCODE="UTF8"
 
+port = ARGV[0].to_i
 rubySlim = RubySlim.new
-rubySlim.run(ARGV[0].to_i)
+rubySlim.run(port)
+

@@ -1,4 +1,4 @@
-require "statement_executor"
+require "rubyslim/statement_executor"
 
 class Statement
   EXCEPTION_TAG = "__EXCEPTION__:"

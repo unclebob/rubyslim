@@ -7,7 +7,7 @@ class TableToHashConverter
       return html_to_hash(doc)
     rescue
       return string
-    end   
+    end
   end
 
   def self.html_to_hash(doc)

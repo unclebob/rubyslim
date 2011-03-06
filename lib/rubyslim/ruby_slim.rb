@@ -1,7 +1,7 @@
-require "socket_service"
-require "list_deserializer"
-require "list_serializer"
-require "list_executor"
+require "rubyslim/socket_service"
+require "rubyslim/list_deserializer"
+require "rubyslim/list_serializer"
+require "rubyslim/list_executor"
 
 class RubySlim
   def run(port)
