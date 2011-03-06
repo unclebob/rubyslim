@@ -1,17 +1,20 @@
-Ruby Slim Protocol (V0.1)
-=========================
+Ruby Slim
+=========
+
+This package provides a SliM server implementing the [FitNesse](http://fitnesse.org)
+[SliM protocol](http://fitnesse.org/FitNesse.UserGuide.SliM.SlimProtocol). It allows
+you to write test fixtures in Ruby, and invoke them from a FitNesse test.
+
 
 Setup
 -----
 
-Put these command in a parent of the Ruby test pages.
+Put these commands in a parent of the Ruby test pages.
 
     !define TEST_SYSTEM {slim}
-    !define TEST_RUNNER {<wherever you put Ruby Slim>/lib/run_ruby_slim.rb}
-    !define COMMAND_PATTERN {ruby -I %p %m}
-    !define PATH_SEPARATOR {-I}
-    !path <wherever you put Ruby Slim>/lib
-    !path <any directory where you have ruby fixtures>
+    !define TEST_RUNNER {rubyslim}
+    !define COMMAND_PATTERN {rubyslim}
+    !path your/ruby/fixtures
 
 Paths can be relative. You should put the following in an appropriate SetUp page:
 
