@@ -6,6 +6,31 @@ This package provides a SliM server implementing the [FitNesse](http://fitnesse.
 you to write test fixtures in Ruby, and invoke them from a FitNesse test.
 
 
+Fixture names
+-------------
+
+Rubyslim is very particular about how your modules and classes are named, and
+how you import and use them in your FitNesse wiki:
+
+* Fixture folder must be `lowercase_and_underscore`
+* Fixture filenames must be `lowercase_and_underscore`
+* Ruby module name must be the `CamelCase` version of fixture folder name
+* Ruby class name must be the `CamelCase` version of the fixture file name
+
+For example, this naming scheme is valid:
+
+* Folder: `ruby_fix`
+* Filename: `my_fixture.rb`
+* Module: `RubyFix`
+* Class: `MyFixture`
+
+If you have `TwoWords` in CamelCase, then that would be `two_words` with
+underscores. If you have only `oneword` in the lowercase version, then you must
+have `Oneword` in the CamelCase version. If all of these naming conventions are
+not exactly followed, you'll get mysterious errors like `Could not invoke
+constructor` for your Slim tables.
+
+
 Setup
 -----
 
