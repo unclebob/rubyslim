@@ -1,4 +1,4 @@
-require "statement_executor"
+require "rubyslim/statement_executor"
 
 class Statement
   EXCEPTION_TAG = "__EXCEPTION__:"
@@ -28,10 +28,10 @@ class Statement
         @executor.set_symbol(get_word(2), result[1])
         result
       else
-        [id, EXCEPTION_TAG+"message:<<INVALID_STATEMENT: #{@statement.inspect}.>>"]
+        [id, EXCEPTION_TAG + "message:<<INVALID_STATEMENT: #{@statement.inspect}.>>"]
       end
     rescue SlimError => e
-      [id, EXCEPTION_TAG+e.message]
+      [id, EXCEPTION_TAG + e.message]
     rescue Exception => e
       [id, EXCEPTION_TAG + e.message + "\n" + e.backtrace.join("\n")]
     end

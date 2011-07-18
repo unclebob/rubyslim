@@ -1,0 +1,10 @@
+#!/usr/bin/env ruby
+
+require 'rubyslim/ruby_slim'
+require 'jcode'
+$KCODE="UTF8"
+
+port = ARGV[0].to_i
+rubySlim = RubySlim.new
+rubySlim.run(port)
+

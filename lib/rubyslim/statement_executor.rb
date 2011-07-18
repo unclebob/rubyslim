@@ -1,7 +1,7 @@
-require "slim_error"
-require "statement"
-require "table_to_hash_converter"
-require "slim_helper_library"
+require "rubyslim/slim_error"
+require "rubyslim/statement"
+require "rubyslim/table_to_hash_converter"
+require "rubyslim/slim_helper_library"
 
 class StatementExecutor
   def initialize
