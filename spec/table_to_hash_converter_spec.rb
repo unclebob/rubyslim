@@ -22,7 +22,8 @@ describe TableToHashConverter do
   [
     ["<table><tr><td>name</td><td>bob</td></tr></table>", {:name=>"bob"}],
     [" <table> <tr> <td> name </td> <td> bob </td> </tr> </table> ", {:name=>"bob"}],
-    ["<table><tr><td>name</td><td>bob</td></tr><tr><td>addr</td><td>here</td></tr></table>", {:name=>'bob', :addr=>'here'}]
+    ["<table><tr><td>name</td><td>bob</td></tr><tr><td>addr</td><td>here</td></tr></table>", {:name=>'bob', :addr=>'here'}],
+    ["<table><tr><td>name</td><td> </td></tr></table>", {:name=>""}],
   ].each do |table, hash|
     it "should match #{table} to #{hash}" do
       TableToHashConverter.convert(table).should == hash
