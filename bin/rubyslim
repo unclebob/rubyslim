@@ -1,5 +1,7 @@
 #!/usr/bin/env ruby
 
+$:.unshift(File.expand_path(File.dirname(__FILE__) + "/../lib/"))
+
 require 'rubyslim/ruby_slim'
 
 port = ARGV[0].to_i
