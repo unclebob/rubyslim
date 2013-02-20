@@ -1,5 +1,3 @@
-require 'jcode'
-
 module ListDeserializer
   class SyntaxError < Exception
   end
@@ -31,7 +29,7 @@ module ListDeserializer
         item = @string[@pos...@pos+length_of_item]
         length_in_bytes = length_of_item
 
-        until (item.jlength > length_of_item) do
+        until (item.length > length_of_item) do
           length_in_bytes += 1
           item = @string[@pos...@pos+length_in_bytes]
         end

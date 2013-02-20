@@ -1,3 +1,4 @@
+# coding: utf-8
 require File.expand_path(File.dirname(__FILE__) + "/spec_helper")
 require "list_serializer"
 
@@ -15,7 +16,7 @@ describe ListSerializer do
   end
 
   it "can serialize a nested list" do
-    ListSerializer.serialize([["element"]]).should == "[000001:000024:[000001:000007:element:]:]" 
+    ListSerializer.serialize([["element"]]).should == "[000001:000024:[000001:000007:element:]:]"
   end
 
   it "can serialize a list with a non-string" do

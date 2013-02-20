@@ -4,6 +4,6 @@ class SimpleScript
   end
 
   def get_arg
-    @arg  
+    @arg
   end
 end
