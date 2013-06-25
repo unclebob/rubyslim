@@ -5,6 +5,10 @@ This package provides a SliM server implementing the [FitNesse](http://fitnesse.
 [SliM protocol](http://fitnesse.org/FitNesse.UserGuide.SliM.SlimProtocol). It allows
 you to write test fixtures in Ruby, and invoke them from a FitNesse test.
 
+This branch (1-8-7-stable) is to support Ruby 1.8.7. No new features will be added to this branch.
+If you haven't upgraded to at least Ruby 1.9.3, you should do so soon. The Ruby core
+team has dropped support for 1.8.7.
+
 
 Fixture names
 -------------
