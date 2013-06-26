@@ -27,6 +27,8 @@ class TableToHashConverter
   def self.add_row_to_hash(hash, row)
     columns = row.get_elements('td')
     raise ArgumentError if columns.size != 2
+    # Handle empty values.
+    columns[1].text = '' if columns[1].text == nil
     hash[columns[0].text.strip.to_sym] = columns[1].text.strip
   end
 end
