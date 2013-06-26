@@ -12,7 +12,6 @@ Gem::Specification.new do |s|
   s.platform = Gem::Platform::RUBY
 
   s.add_development_dependency 'rspec', '~> 1.3.0'
-  s.add_development_dependency 'rcov'
 
   s.files = `git ls-files`.split("\n")
   s.require_path = 'lib'

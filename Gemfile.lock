@@ -1,0 +1,16 @@
+PATH
+  remote: .
+  specs:
+    rubyslim (0.1.1)
+
+GEM
+  remote: http://www.rubygems.org/
+  specs:
+    rspec (1.3.2)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  rspec (~> 1.3.0)
+  rubyslim!
